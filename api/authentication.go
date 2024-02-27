@@ -9,6 +9,7 @@ import (
 )
 
 type AuthenticationOutput struct {
+	ID    string `json:"id"`
 	Token string `json:"token"`
 	Email string `json:"email"`
 	Name  string `json:"name"`
@@ -41,9 +42,10 @@ func authenticateUser(app *AppContext) func(ctx *gin.Context) {
 		}
 
 		output := AuthenticationOutput{
-			Token: token,
+			ID:    user.ID,
 			Email: user.Email,
 			Name:  user.Name,
+			Token: token,
 		}
 
 		ctx.JSON(http.StatusOK, output)

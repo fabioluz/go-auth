@@ -47,7 +47,7 @@ func getLogs(appCtx *AppContext) func(ctx *gin.Context) {
 
 		logs, err := appCtx.LogService.GetLogs(loggedInUser.ID, pageSize, after)
 		if err != nil {
-			ctx.AbortWithStatus(http.StatusInternalServerError)
+			ctx.AbortWithStatus(http.StatusBadRequest)
 			return
 		}
 

@@ -9,7 +9,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-// Input struct for creating a user
+// Input struct for creating a user (unvalidated)
 type CreateUser struct {
 	Email           string `json:"email"`
 	Password        string `json:"password"`
@@ -36,6 +36,7 @@ const (
 	ConfirmPasswordDoesNotMatch CreateUserErrorCode = "confirm_password_does_not_match"
 )
 
+// Input struct for creating a user after validation.
 type ValidCreateUser struct {
 	Email          string
 	HashedPassword string
