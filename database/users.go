@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"errors"
 
 	"auth/domain/users"
 
@@ -84,4 +85,23 @@ func (repo *MongoUserRepository) InsertUser(ctx context.Context, input users.Val
 
 	user.ID = insertedID
 	return mapUser(user)
+}
+
+func (repo *MongoUserRepository) UpdateUser(ctx context.Context, id string, input users.ValidUpdateUser) error {
+	objectID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return err
+	}
+
+	updateFields := bson.M{"$set": bson.M{"name": input.Name}}
+	result, err := repo.GetUsersCollection().UpdateByID(ctx, objectID, updateFields)
+	if err != nil {
+		return err
+	}
+
+	if result.ModifiedCount != 1 {
+		return errors.New("could not update user")
+	}
+
+	return nil
 }

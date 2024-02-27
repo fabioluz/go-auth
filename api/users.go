@@ -57,3 +57,38 @@ func getUser(appCtx *AppContext) func(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, user)
 	}
 }
+
+func updateUser(appCtx *AppContext) func(ctx *gin.Context) {
+	return func(ctx *gin.Context) {
+		loggedInUser, err := getLoggedInUser(ctx)
+		if err != nil {
+			ctx.AbortWithStatus(http.StatusNotFound)
+			return
+		}
+
+		if ctx.Param("userId") != loggedInUser.ID {
+			ctx.AbortWithStatus(http.StatusNotFound)
+			return
+		}
+
+		var input users.UpdateUser
+		if err := ctx.BindJSON(&input); err != nil {
+			ctx.AbortWithStatus(http.StatusBadRequest)
+			return
+		}
+
+		err = appCtx.UserService.UpdateUser(loggedInUser.ID, input)
+		if err != nil {
+			var userErr *users.UpdateUserError
+			if errors.As(err, &userErr) {
+				ctx.JSON(http.StatusUnprocessableEntity, userErr)
+				return
+			}
+
+			ctx.AbortWithStatus(http.StatusInternalServerError)
+			return
+		}
+
+		ctx.Status(http.StatusNoContent)
+	}
+}

@@ -21,6 +21,7 @@ func Run(appCtx *AppContext) {
 	router.POST("/authenticate", authenticateUser(appCtx))
 	router.POST("/users", createUser(appCtx))
 	router.GET("/users/:userId", getUser(appCtx))
+	router.PATCH("/users/:userId", updateUser(appCtx))
 	router.GET("/users/:userId/logs", getLogs(appCtx))
 
 	router.Run(":" + strconv.Itoa(appCtx.Port))
