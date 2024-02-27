@@ -6,7 +6,6 @@ import (
 	"auth/domain/logs"
 	"auth/domain/users"
 	"context"
-	"fmt"
 	"log"
 	"os"
 	"strconv"
@@ -37,7 +36,6 @@ func main() {
 	}
 
 	api.Run(appCtx)
-	fmt.Println("Hello, World!")
 }
 
 type envVars struct {

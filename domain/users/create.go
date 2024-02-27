@@ -5,8 +5,6 @@ import (
 	"context"
 	"regexp"
 	"strings"
-
-	"go.mongodb.org/mongo-driver/mongo"
 )
 
 // Input struct for creating a user (unvalidated)
@@ -79,7 +77,7 @@ func (service *UserService) validateCreateUser(input CreateUser) (*ValidCreateUs
 	}
 
 	user, err := service.userRepository.GetUserByEmail(context.TODO(), input.Email)
-	if err != nil && err != mongo.ErrNoDocuments {
+	if err != nil {
 		panic(err)
 	}
 
