@@ -27,7 +27,7 @@ type user struct {
 
 func mapUser(mongoModel user) (*users.User, error) {
 	return &users.User{
-		ID:             mongoModel.ID.String(),
+		ID:             mongoModel.ID.Hex(),
 		Email:          mongoModel.Email,
 		HashedPassword: mongoModel.HashedPassword,
 		Name:           mongoModel.Name,
@@ -36,6 +36,21 @@ func mapUser(mongoModel user) (*users.User, error) {
 
 func (repo *MongoUserRepository) GetUsersCollection() *mongo.Collection {
 	return repo.client.Database("auth").Collection("users")
+}
+
+func (repo *MongoUserRepository) GetUserByID(ctx context.Context, id string) (*users.User, error) {
+	objectID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return nil, err
+	}
+
+	var result user
+	err = repo.GetUsersCollection().FindOne(ctx, bson.D{{Key: "_id", Value: objectID}}).Decode(&result)
+	if err != nil {
+		return nil, err
+	}
+
+	return mapUser(result)
 }
 
 func (repo *MongoUserRepository) GetUserByEmail(ctx context.Context, email string) (*users.User, error) {

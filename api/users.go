@@ -34,3 +34,26 @@ func createUser(app *AppContext) func(ctx *gin.Context) {
 		ctx.JSON(http.StatusCreated, response)
 	}
 }
+
+func getUser(appCtx *AppContext) func(ctx *gin.Context) {
+	return func(ctx *gin.Context) {
+		loggedInUser, err := getLoggedInUser(ctx)
+		if err != nil {
+			ctx.AbortWithStatus(http.StatusInternalServerError)
+			return
+		}
+
+		if ctx.Param("userId") != loggedInUser.ID {
+			ctx.AbortWithStatus(http.StatusNotFound)
+			return
+		}
+
+		user, err := appCtx.UserService.GetUser(loggedInUser.ID)
+		if err != nil {
+			ctx.AbortWithStatus(http.StatusInternalServerError)
+			return
+		}
+
+		ctx.JSON(http.StatusOK, user)
+	}
+}

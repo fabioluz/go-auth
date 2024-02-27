@@ -8,16 +8,16 @@ import (
 type LogOperation string
 
 const (
-	LogOperationCreate LogOperation = "create"
-	LogOperationUpdate LogOperation = "update"
-	LogOperationDelete LogOperation = "delete"
+	LogOperationCreateUser   LogOperation = "create-user"
+	LogOperationUpdateUser   LogOperation = "update-user"
+	LogOperationDeleteDelete LogOperation = "delete-user"
 )
 
 type Log struct {
-	ID        string
-	UserID    string
-	Operation LogOperation
-	Timestamp time.Time
+	ID        string       `json:"id"`
+	UserID    string       `json:"-"`
+	Operation LogOperation `json:"operation"`
+	Timestamp time.Time    `json:"timestamp"`
 }
 
 type LogRepository interface {

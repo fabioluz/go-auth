@@ -9,6 +9,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+// Input struct for creating a user
 type CreateUser struct {
 	Email           string `json:"email"`
 	Password        string `json:"password"`
@@ -116,7 +117,7 @@ func (service *UserService) CreateUser(input CreateUser) (*User, error) {
 			return err
 		}
 
-		_, err = service.logRepository.InsertLog(ctx, createdUser.ID, logs.LogOperationCreate)
+		_, err = service.logRepository.InsertLog(ctx, createdUser.ID, logs.LogOperationCreateUser)
 		return err
 	})
 

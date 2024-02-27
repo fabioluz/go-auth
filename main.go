@@ -29,6 +29,7 @@ func main() {
 
 	appCtx := &api.AppContext{
 		Port:        envVars.port,
+		JwtSecret:   []byte(envVars.jwtSecret),
 		UserService: userService,
 	}
 
@@ -39,6 +40,7 @@ func main() {
 type envVars struct {
 	dbUri        string
 	dbReplicaSet string
+	jwtSecret    string
 	port         int
 }
 
@@ -74,6 +76,7 @@ func loadEnvVars() *envVars {
 	return &envVars{
 		dbUri:        lookup("DB_URI", "mongodb://localhost:27017/"),
 		dbReplicaSet: lookup("DB_REPLICA_SET", "myReplicaSet"),
+		jwtSecret:    lookup("JWT_SECRET", ""),
 		port:         port,
 	}
 
