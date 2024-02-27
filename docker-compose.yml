@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: app
+    networks:
+      - appNetwork
+    ports:
+      - "8080:8080"
+
+  appmongo1:
+    image: mongo:latest
+    hostname: appmongo1
+    container_name: appmongo1
+    networks:
+      - appNetwork
+    ports:
+      - 27017:27017
+    command: mongod --replSet myReplicaSet --bind_ip localhost,appmongo1
+    
+  appmongo2:
+    image: mongo:latest
+    hostname: appmongo2
+    container_name: appmongo2
+    networks:
+      - appNetwork
+    ports:
+      - 27018:27017
+    command: mongod --replSet myReplicaSet --bind_ip localhost,appmongo2
+  
+  mongosetup:
+    image: mongo:latest
+    networks:
+      - appNetwork
+    depends_on:
+      - appmongo1
+      - appmongo2
+    volumes:
+      - ./scripts:/scripts
+    restart: "no"
+    entrypoint: [ "bash", "./scripts/mongo_setup.sh"]
+
+networks:
+  appNetwork:

@@ -68,7 +68,7 @@ func (repo *MongoLogRepository) GetLogs(ctx context.Context, userID string, page
 		return nil, err
 	}
 
-	var logs []logs.Log
+	logs := []logs.Log{}
 	for _, log := range mongoLogs {
 		logs = append(logs, mapLog(log))
 	}
