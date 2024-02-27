@@ -39,7 +39,7 @@ func getUser(appCtx *AppContext) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
 		loggedInUser, err := getLoggedInUser(ctx)
 		if err != nil {
-			ctx.AbortWithStatus(http.StatusInternalServerError)
+			ctx.AbortWithStatus(http.StatusNotFound)
 			return
 		}
 

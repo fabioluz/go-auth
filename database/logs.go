@@ -5,8 +5,10 @@ import (
 	"context"
 	"time"
 
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type MongoLogRepository struct {
@@ -35,6 +37,31 @@ func mapLog(mongoModel log) *logs.Log {
 
 func (repo *MongoLogRepository) GetLogsCollection() *mongo.Collection {
 	return repo.client.Database("auth").Collection("logs")
+}
+
+func (repo *MongoLogRepository) GetLogs(ctx context.Context, userID string, pageSize int, after string) ([]logs.Log, error) {
+	var query bson.M
+	if after == "" {
+		query = bson.M{"userId": userID, "_id": bson.M{"$gt": after}}
+	} else {
+		query = bson.M{"userId": userID}
+	}
+
+	findOptions := options.Find()
+	findOptions.SetLimit(int64(pageSize))
+
+	cursor, err := repo.GetLogsCollection().Find(ctx, query, findOptions)
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	var logs []logs.Log
+	if err := cursor.All(ctx, &logs); err != nil {
+		return nil, err
+	}
+
+	return logs, nil
 }
 
 func (repo *MongoLogRepository) InsertLog(ctx context.Context, userID string, op logs.LogOperation) (*logs.Log, error) {

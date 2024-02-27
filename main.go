@@ -3,6 +3,7 @@ package main
 import (
 	"auth/api"
 	"auth/database"
+	"auth/domain/logs"
 	"auth/domain/users"
 	"context"
 	"fmt"
@@ -26,11 +27,13 @@ func main() {
 	logRepository := database.NewLogRepository(client)
 
 	userService := users.NewUserService(transactionRepository, logRepository, userRepository)
+	logService := logs.NewLogService(logRepository)
 
 	appCtx := &api.AppContext{
 		Port:        envVars.port,
 		JwtSecret:   []byte(envVars.jwtSecret),
 		UserService: userService,
+		LogService:  logService,
 	}
 
 	api.Run(appCtx)
