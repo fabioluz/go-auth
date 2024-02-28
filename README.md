@@ -11,7 +11,17 @@ You can run everything via docker compose.
 
 ## Setting Up the Application
 
-To set up the API and MongoDB cluster, run the following command:
+Firstly, you need to create a `.env` in the root folder containing:
+
+```
+DB_URI=mongodb://appmongo1:27017
+DB_REPLICA_SET=myReplicaSet
+JWT_SECRET=<YOUR_TOKEN_SECRET_HERE>
+```
+
+You can change the details of `DB_URI` and `DB_REPLICA_SET` as needed.
+
+To run the API and MongoDB cluster, run the following command:
 
 ```bash
 docker compose up -d
