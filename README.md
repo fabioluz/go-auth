@@ -3,8 +3,8 @@
 This an example of API with authentication in Go. It gives some separation of concerns by organizing the layers into different packages, isolating the capabilities on their own files, and abstracting the dependencies using design patterns. All dependencies are interpreted in the `main.go` file. 
 
 Libraries used:
-* Gin for the API
-* JWT for generating authorization token
+* Gin for the API.
+* JWT for generating authorization token.
 * MongoDB Client for database connection.
 
 The application is capable of creating, authorizing, and updating users. All the operations are logged in the database and can be also retrieved in the API.
