@@ -37,7 +37,7 @@ func (service *UserService) AuthenticateUser(input AuthenticateUser) (*User, err
 		return authenticateError()
 	}
 
-	if !ComparePassword(user.HashedPassword, input.Password) {
+	if !comparePassword(user.HashedPassword, input.Password) {
 		return authenticateError()
 	}
 

@@ -1,4 +1,4 @@
-package database
+package persistence
 
 import (
 	"auth/domain/logs"

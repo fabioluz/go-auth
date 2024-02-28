@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-// Input struct for creating a user (unvalidated)
+// Unvalidated Input for creating user
 type CreateUser struct {
 	Email           string `json:"email"`
 	Password        string `json:"password"`
@@ -34,7 +34,7 @@ const (
 	ConfirmPasswordDoesNotMatch CreateUserErrorCode = "confirm_password_does_not_match"
 )
 
-// Input struct for creating a user after validation.
+// Validated input for creating user
 type ValidCreateUser struct {
 	Email          string
 	HashedPassword string
@@ -88,7 +88,7 @@ func (service *UserService) validateCreateUser(input CreateUser) (*ValidCreateUs
 		}
 	}
 
-	hashedPassword, err := HashPassword(input.Password)
+	hashedPassword, err := hashPassword(input.Password)
 	if err != nil {
 		panic(err)
 	}

@@ -2,9 +2,9 @@ package main
 
 import (
 	"auth/api"
-	"auth/database"
 	"auth/domain/logs"
 	"auth/domain/users"
+	"auth/persistence"
 	"context"
 	"log"
 	"os"
@@ -21,9 +21,9 @@ func main() {
 	client := connectMongoDB(envVars)
 
 	// Initialize the dependencies
-	transactionRepository := database.NewTransactionRepository(client)
-	userRepository := database.NewUserRepository(client)
-	logRepository := database.NewLogRepository(client)
+	transactionRepository := persistence.NewTransactionRepository(client)
+	userRepository := persistence.NewUserRepository(client)
+	logRepository := persistence.NewLogRepository(client)
 
 	userService := users.NewUserService(transactionRepository, logRepository, userRepository)
 	logService := logs.NewLogService(logRepository)

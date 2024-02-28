@@ -5,7 +5,7 @@ import (
 	"context"
 )
 
-// Unvalidated input for udpating user
+// Unvalidated input for updating user
 type UpdateUser struct {
 	Name string `json:"name"`
 }
