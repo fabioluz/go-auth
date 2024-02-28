@@ -33,7 +33,7 @@ func authenticateError() (*User, error) {
 
 func (service *UserService) AuthenticateUser(input AuthenticateUser) (*User, error) {
 	user, err := service.userRepository.GetUserByEmail(context.Background(), input.Email)
-	if err != nil {
+	if err != nil || user == nil {
 		return authenticateError()
 	}
 

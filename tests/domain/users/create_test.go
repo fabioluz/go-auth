@@ -1,80 +1,78 @@
-package users
+package tests
 
 import (
-	"auth/domain/logs"
-	"context"
+	"auth/domain/users"
 	"errors"
 	"testing"
-	"time"
 )
 
 func TestInvalidInput(t *testing.T) {
 	var tests = []struct {
 		name  string
-		input CreateUser
-		want  CreateUserError
+		input users.CreateUser
+		want  users.CreateUserError
 	}{
 		{
 			name: "Empty email",
-			input: CreateUser{
+			input: users.CreateUser{
 				Email: "",
 			},
-			want: CreateUserError{
-				Code: EmailIsEmpty,
+			want: users.CreateUserError{
+				Code: users.EmailIsEmpty,
 			},
 		},
 		{
 			name: "Invalid email",
-			input: CreateUser{
+			input: users.CreateUser{
 				Email: "test",
 			},
-			want: CreateUserError{
-				Code: EmailIsInvalid,
+			want: users.CreateUserError{
+				Code: users.EmailIsInvalid,
 			},
 		},
 		{
 			name: "Invalid password",
-			input: CreateUser{
+			input: users.CreateUser{
 				Email:           "non-existing@email.com",
 				Password:        "12345",
 				ConfirmPassword: "12345",
 			},
-			want: CreateUserError{
-				Code: PasswordIsInvalid,
+			want: users.CreateUserError{
+				Code: users.PasswordIsInvalid,
 			},
 		},
 		{
 			name: "Unmatched password",
-			input: CreateUser{
+			input: users.CreateUser{
 				Email:           "non-existing@email.com",
 				Password:        "123456",
 				ConfirmPassword: "12345",
 			},
-			want: CreateUserError{
-				Code: ConfirmPasswordDoesNotMatch,
+			want: users.CreateUserError{
+				Code: users.ConfirmPasswordDoesNotMatch,
 			},
 		},
 		{
 			name: "Email in use",
-			input: CreateUser{
+			input: users.CreateUser{
 				Email:           "existing@email.com",
 				Password:        "123456",
 				ConfirmPassword: "123456",
 				Name:            "Test",
 			},
-			want: CreateUserError{
-				Code: EmailAlreadyInUse,
+			want: users.CreateUserError{
+				Code: users.EmailAlreadyInUse,
 			},
 		},
 	}
 
-	service := NewUserService(&MockTransactionRepository{}, &MockLogRepository{}, &MockUserRepository{})
+	service := users.NewUserService(&MockTransactionRepository{}, &MockLogRepository{}, &MockUserRepository{})
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			user, err := service.CreateUser(tt.input)
 			if err != nil {
-				var userErr *CreateUserError
+				var userErr *users.CreateUserError
 				if errors.As(err, &userErr) && userErr.Code == tt.want.Code {
 					return
 				}
@@ -86,8 +84,8 @@ func TestInvalidInput(t *testing.T) {
 }
 
 func TestValidInput(t *testing.T) {
-	service := NewUserService(&MockTransactionRepository{}, &MockLogRepository{}, &MockUserRepository{})
-	validInput := CreateUser{
+	service := users.NewUserService(&MockTransactionRepository{}, &MockLogRepository{}, &MockUserRepository{})
+	validInput := users.CreateUser{
 		Email:           "non-existing@email.com",
 		Password:        "123456",
 		ConfirmPassword: "123456",
@@ -112,25 +110,4 @@ func TestValidInput(t *testing.T) {
 	if user.Name != validInput.Name {
 		t.Errorf("got %s, want %s", user.Name, validInput.Name)
 	}
-}
-
-type MockTransactionRepository struct{}
-
-func (repo *MockTransactionRepository) WithTransaction(fn func(ctx context.Context) error) error {
-	return fn(context.TODO())
-}
-
-type MockLogRepository struct{}
-
-func (repo *MockLogRepository) InsertLog(ctx context.Context, userID string, op logs.LogOperation) (*logs.Log, error) {
-	return &logs.Log{
-		ID:        "65dc8fa57bd9e61fb8817a0a",
-		UserID:    "65dc8fa57bd9e61fb8817a09",
-		Operation: op,
-		Timestamp: time.Now().UTC(),
-	}, nil
-}
-
-func (repo *MockLogRepository) GetLogs(ctx context.Context, userID string, pageSize int, after string) ([]logs.Log, error) {
-	return []logs.Log{}, nil
 }
