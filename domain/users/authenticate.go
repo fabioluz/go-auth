@@ -4,7 +4,7 @@ import (
 	"context"
 )
 
-type AuthenticateUser struct {
+type AuthenticateUserInput struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
@@ -31,7 +31,7 @@ func authenticateError() (*User, error) {
 	}
 }
 
-func (service *UserService) AuthenticateUser(input AuthenticateUser) (*User, error) {
+func (service *UserService) AuthenticateUser(input AuthenticateUserInput) (*User, error) {
 	user, err := service.userRepository.GetUserByEmail(context.Background(), input.Email)
 	if err != nil || user == nil {
 		return authenticateError()

@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type AuthenticationOutput struct {
+type AuthenticateUserOutput struct {
 	ID    string `json:"id"`
 	Token string `json:"token"`
 	Email string `json:"email"`
@@ -17,7 +17,7 @@ type AuthenticationOutput struct {
 
 func authenticateUser(app *AppContext) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
-		var request users.AuthenticateUser
+		var request users.AuthenticateUserInput
 		if err := ctx.BindJSON(&request); err != nil {
 			ctx.AbortWithStatus(http.StatusBadRequest)
 			return
@@ -41,7 +41,7 @@ func authenticateUser(app *AppContext) func(ctx *gin.Context) {
 			return
 		}
 
-		output := AuthenticationOutput{
+		output := AuthenticateUserOutput{
 			ID:    user.ID,
 			Email: user.Email,
 			Name:  user.Name,

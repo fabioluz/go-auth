@@ -9,7 +9,7 @@ import (
 func TestUserNotFound(t *testing.T) {
 	service := users.NewUserService(nil, nil, &MockUserRepository{})
 
-	input := users.AuthenticateUser{
+	input := users.AuthenticateUserInput{
 		Email:    "some@email.com",
 		Password: "some-password",
 	}
@@ -32,7 +32,7 @@ func TestUserNotFound(t *testing.T) {
 func TestIncorrectPassword(t *testing.T) {
 	service := users.NewUserService(nil, nil, &MockUserRepository{})
 
-	input := users.AuthenticateUser{
+	input := users.AuthenticateUserInput{
 		Email:    "existing@email.com",
 		Password: "",
 	}
@@ -51,7 +51,7 @@ func TestIncorrectPassword(t *testing.T) {
 func TestCorrectPassword(t *testing.T) {
 	service := users.NewUserService(nil, nil, &MockUserRepository{})
 
-	input := users.AuthenticateUser{
+	input := users.AuthenticateUserInput{
 		Email:    "existing@email.com",
 		Password: "123456",
 	}
