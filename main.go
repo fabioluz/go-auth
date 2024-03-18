@@ -75,7 +75,7 @@ func loadEnvVars() *envVars {
 	}
 
 	return &envVars{
-		dbUri:        lookup("DB_URI", "mongodb://localhost:27017/"),
+		dbUri:        lookup("DB_URI", "mongodb://appmongo1:27017/"),
 		dbReplicaSet: lookup("DB_REPLICA_SET", "myReplicaSet"),
 		jwtSecret:    lookup("JWT_SECRET", ""),
 		port:         port,

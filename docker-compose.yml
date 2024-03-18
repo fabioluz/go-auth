@@ -17,7 +17,7 @@ services:
       - appNetwork
     ports:
       - 27017:27017
-    command: mongod --replSet myReplicaSet --bind_ip localhost,appmongo1
+    command: mongod --replSet myReplicaSet
     
   appmongo2:
     image: mongo:latest
@@ -27,7 +27,7 @@ services:
       - appNetwork
     ports:
       - 27018:27017
-    command: mongod --replSet myReplicaSet --bind_ip localhost,appmongo2
+    command: mongod --replSet myReplicaSet
   
   mongosetup:
     image: mongo:latest
