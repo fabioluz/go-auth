@@ -57,19 +57,19 @@ func (service *UserService) validateUpdateUser(input UpdateUser) (*ValidUpdateUs
 	return &validUser, nil
 }
 
-func (service *UserService) UpdateUser(id string, input UpdateUser) error {
+func (service *UserService) Update(id string, input UpdateUser) error {
 	validUser, err := service.validateUpdateUser(input)
 	if err != nil {
 		return err
 	}
 
 	updateUserError := service.transactionRepository.WithTransaction(func(ctx context.Context) error {
-		err := service.userRepository.UpdateUser(ctx, id, *validUser)
+		err := service.userRepository.Update(ctx, id, *validUser)
 		if err != nil {
 			return err
 		}
 
-		_, err = service.logRepository.InsertLog(ctx, id, logs.LogOperationUpdateUser)
+		_, err = service.logRepository.Insert(ctx, id, logs.LogOperationUpdateUser)
 		return err
 	})
 

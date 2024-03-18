@@ -73,7 +73,7 @@ func TestInvalidInput(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			user, err := service.CreateUser(tt.input)
+			user, err := service.Create(tt.input)
 			if err != nil {
 				var userErr *users.CreateUserError
 				if errors.As(err, &userErr) && userErr.Code == tt.want.Code {
@@ -96,7 +96,7 @@ func TestValidInput(t *testing.T) {
 		Name:            "Test",
 	}
 
-	user, err := service.CreateUser(validInput)
+	user, err := service.Create(validInput)
 	if err != nil {
 		t.Errorf("create user returned error: %s", err)
 		return

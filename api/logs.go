@@ -45,7 +45,7 @@ func getLogs(appCtx *AppContext) func(ctx *gin.Context) {
 		pageSize := getPageSizeParam(ctx)
 		after := getAfterParam(ctx)
 
-		logs, err := appCtx.LogService.GetLogs(loggedInUser.ID, pageSize, after)
+		logs, err := appCtx.LogService.Get(loggedInUser.ID, pageSize, after)
 		if err != nil {
 			ctx.AbortWithStatus(http.StatusBadRequest)
 			return

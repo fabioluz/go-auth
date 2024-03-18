@@ -16,7 +16,7 @@ func createUser(app *AppContext) func(ctx *gin.Context) {
 			return
 		}
 
-		_, err := app.UserService.CreateUser(request)
+		_, err := app.UserService.Create(request)
 		if err != nil {
 			var userErr *users.CreateUserError
 			if errors.As(err, &userErr) {
@@ -48,7 +48,7 @@ func getUser(appCtx *AppContext) func(ctx *gin.Context) {
 			return
 		}
 
-		user, err := appCtx.UserService.GetUser(loggedInUser.ID)
+		user, err := appCtx.UserService.Get(loggedInUser.ID)
 		if err != nil {
 			ctx.AbortWithStatus(http.StatusInternalServerError)
 			return
@@ -77,7 +77,7 @@ func updateUser(appCtx *AppContext) func(ctx *gin.Context) {
 			return
 		}
 
-		err = appCtx.UserService.UpdateUser(loggedInUser.ID, input)
+		err = appCtx.UserService.Update(loggedInUser.ID, input)
 		if err != nil {
 			var userErr *users.UpdateUserError
 			if errors.As(err, &userErr) {

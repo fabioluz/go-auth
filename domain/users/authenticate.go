@@ -31,8 +31,8 @@ func authenticateError() (*User, error) {
 	}
 }
 
-func (service *UserService) AuthenticateUser(input AuthenticateUserInput) (*User, error) {
-	user, err := service.userRepository.GetUserByEmail(context.Background(), input.Email)
+func (service *UserService) Authenticate(input AuthenticateUserInput) (*User, error) {
+	user, err := service.userRepository.GetByEmail(context.Background(), input.Email)
 	if err != nil || user == nil {
 		return authenticateError()
 	}

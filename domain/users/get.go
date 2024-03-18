@@ -4,6 +4,6 @@ import (
 	"context"
 )
 
-func (service *UserService) GetUser(id string) (*User, error) {
-	return service.userRepository.GetUserByID(context.Background(), id)
+func (service *UserService) Get(id string) (*User, error) {
+	return service.userRepository.GetByID(context.Background(), id)
 }

@@ -35,18 +35,18 @@ func mapUser(mongoModel user) (*users.User, error) {
 	}, nil
 }
 
-func (repo *MongoUserRepository) GetUsersCollection() *mongo.Collection {
+func (repo *MongoUserRepository) Collection() *mongo.Collection {
 	return repo.client.Database("auth").Collection("users")
 }
 
-func (repo *MongoUserRepository) GetUserByID(ctx context.Context, id string) (*users.User, error) {
+func (repo *MongoUserRepository) GetByID(ctx context.Context, id string) (*users.User, error) {
 	objectID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
 		return nil, err
 	}
 
 	var result user
-	err = repo.GetUsersCollection().FindOne(ctx, bson.D{{Key: "_id", Value: objectID}}).Decode(&result)
+	err = repo.Collection().FindOne(ctx, bson.D{{Key: "_id", Value: objectID}}).Decode(&result)
 	if err != nil {
 		return nil, err
 	}
@@ -54,8 +54,8 @@ func (repo *MongoUserRepository) GetUserByID(ctx context.Context, id string) (*u
 	return mapUser(result)
 }
 
-func (repo *MongoUserRepository) GetUserByEmail(ctx context.Context, email string) (*users.User, error) {
-	collection := repo.GetUsersCollection()
+func (repo *MongoUserRepository) GetByEmail(ctx context.Context, email string) (*users.User, error) {
+	collection := repo.Collection()
 	var result user
 	err := collection.FindOne(ctx, bson.D{{Key: "email", Value: email}}).Decode(&result)
 	if err != nil {
@@ -65,8 +65,8 @@ func (repo *MongoUserRepository) GetUserByEmail(ctx context.Context, email strin
 	return mapUser(result)
 }
 
-func (repo *MongoUserRepository) InsertUser(ctx context.Context, input users.ValidCreateUser) (*users.User, error) {
-	collection := repo.GetUsersCollection()
+func (repo *MongoUserRepository) Insert(ctx context.Context, input users.ValidCreateUser) (*users.User, error) {
+	collection := repo.Collection()
 	user := user{
 		ID:             primitive.ObjectID{},
 		Email:          input.Email,
@@ -87,14 +87,14 @@ func (repo *MongoUserRepository) InsertUser(ctx context.Context, input users.Val
 	return mapUser(user)
 }
 
-func (repo *MongoUserRepository) UpdateUser(ctx context.Context, id string, input users.ValidUpdateUser) error {
+func (repo *MongoUserRepository) Update(ctx context.Context, id string, input users.ValidUpdateUser) error {
 	objectID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
 		return err
 	}
 
 	updateFields := bson.M{"$set": bson.M{"name": input.Name}}
-	result, err := repo.GetUsersCollection().UpdateByID(ctx, objectID, updateFields)
+	result, err := repo.Collection().UpdateByID(ctx, objectID, updateFields)
 	if err != nil {
 		return err
 	}

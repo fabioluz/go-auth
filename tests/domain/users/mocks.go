@@ -9,11 +9,11 @@ import (
 
 type MockUserRepository struct{}
 
-func (repo *MockUserRepository) GetUserByID(ctx context.Context, id string) (*users.User, error) {
+func (repo *MockUserRepository) GetByID(ctx context.Context, id string) (*users.User, error) {
 	panic("not implemented")
 }
 
-func (repo *MockUserRepository) GetUserByEmail(ctx context.Context, email string) (*users.User, error) {
+func (repo *MockUserRepository) GetByEmail(ctx context.Context, email string) (*users.User, error) {
 	if email == "existing@email.com" {
 		user := users.User{
 			ID:             "",
@@ -27,7 +27,7 @@ func (repo *MockUserRepository) GetUserByEmail(ctx context.Context, email string
 	return nil, nil
 }
 
-func (repo *MockUserRepository) InsertUser(ctx context.Context, input users.ValidCreateUser) (*users.User, error) {
+func (repo *MockUserRepository) Insert(ctx context.Context, input users.ValidCreateUser) (*users.User, error) {
 	return &users.User{
 		ID:             "65dc8fa57bd9e61fb8817a09",
 		Email:          input.Email,
@@ -36,7 +36,7 @@ func (repo *MockUserRepository) InsertUser(ctx context.Context, input users.Vali
 	}, nil
 }
 
-func (repo *MockUserRepository) UpdateUser(ctx context.Context, id string, input users.ValidUpdateUser) error {
+func (repo *MockUserRepository) Update(ctx context.Context, id string, input users.ValidUpdateUser) error {
 	return nil
 }
 
@@ -48,7 +48,7 @@ func (repo *MockTransactionRepository) WithTransaction(fn func(ctx context.Conte
 
 type MockLogRepository struct{}
 
-func (repo *MockLogRepository) InsertLog(ctx context.Context, userID string, op logs.LogOperation) (*logs.Log, error) {
+func (repo *MockLogRepository) Insert(ctx context.Context, userID string, op logs.LogOperation) (*logs.Log, error) {
 	return &logs.Log{
 		ID:        "65dc8fa57bd9e61fb8817a0a",
 		UserID:    "65dc8fa57bd9e61fb8817a09",
@@ -57,6 +57,6 @@ func (repo *MockLogRepository) InsertLog(ctx context.Context, userID string, op 
 	}, nil
 }
 
-func (repo *MockLogRepository) GetLogs(ctx context.Context, userID string, pageSize int, after string) ([]logs.Log, error) {
+func (repo *MockLogRepository) Get(ctx context.Context, userID string, pageSize int, after string) ([]logs.Log, error) {
 	return []logs.Log{}, nil
 }

@@ -30,7 +30,7 @@ func TestInvalidUpdateUserInput(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			err := service.UpdateUser("", tt.input)
+			err := service.Update("", tt.input)
 			if err != nil {
 				var userErr *users.UpdateUserError
 				if errors.As(err, &userErr) && userErr.Code == tt.want.Code {
@@ -50,7 +50,7 @@ func TestValidUpdateUserInput(t *testing.T) {
 		Name: "Test",
 	}
 
-	err := service.UpdateUser("", validInput)
+	err := service.Update("", validInput)
 	if err != nil {
 		t.Errorf("Update user returned error: %s", err)
 		return

@@ -10,8 +10,8 @@ type User struct {
 }
 
 type UserRepository interface {
-	GetUserByID(ctx context.Context, id string) (*User, error)
-	GetUserByEmail(ctx context.Context, email string) (*User, error)
-	InsertUser(ctx context.Context, input ValidCreateUser) (*User, error)
-	UpdateUser(ctx context.Context, id string, input ValidUpdateUser) error
+	GetByID(ctx context.Context, id string) (*User, error)
+	GetByEmail(ctx context.Context, email string) (*User, error)
+	Insert(ctx context.Context, input ValidCreateUser) (*User, error)
+	Update(ctx context.Context, id string, input ValidUpdateUser) error
 }

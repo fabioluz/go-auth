@@ -21,6 +21,6 @@ type Log struct {
 }
 
 type LogRepository interface {
-	GetLogs(ctx context.Context, userID string, pageSize int, after string) ([]Log, error)
-	InsertLog(ctx context.Context, userID string, op LogOperation) (*Log, error)
+	Get(ctx context.Context, userID string, pageSize int, after string) ([]Log, error)
+	Insert(ctx context.Context, userID string, op LogOperation) (*Log, error)
 }

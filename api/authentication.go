@@ -23,7 +23,7 @@ func authenticateUser(app *AppContext) func(ctx *gin.Context) {
 			return
 		}
 
-		user, err := app.UserService.AuthenticateUser(request)
+		user, err := app.UserService.Authenticate(request)
 		if err != nil {
 			var userErr *users.AuthenticateUserError
 			if errors.As(err, &userErr) {

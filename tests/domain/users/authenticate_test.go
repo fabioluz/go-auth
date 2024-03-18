@@ -17,7 +17,7 @@ func TestUserNotFound(t *testing.T) {
 		Password: "some-password",
 	}
 
-	_, err := service.AuthenticateUser(input)
+	_, err := service.Authenticate(input)
 	if err == nil {
 		t.Errorf("Expected error to be present but was nil.")
 	}
@@ -41,7 +41,7 @@ func TestIncorrectPassword(t *testing.T) {
 		Password: "",
 	}
 
-	_, err := service.AuthenticateUser(input)
+	_, err := service.Authenticate(input)
 	if err != nil {
 		var userErr *users.AuthenticateUserError
 		if errors.As(err, &userErr) && userErr.Code == users.EmailAndPasswordDoesNotMatch {
@@ -61,7 +61,7 @@ func TestCorrectPassword(t *testing.T) {
 		Password: "123456",
 	}
 
-	user, err := service.AuthenticateUser(input)
+	user, err := service.Authenticate(input)
 	if user != nil && err == nil {
 		return
 	}

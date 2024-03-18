@@ -97,7 +97,7 @@ func (service *UserService) validateCreateUser(input CreateUser) (*ValidCreateUs
 		}
 	}
 
-	user, err := service.userRepository.GetUserByEmail(context.TODO(), input.Email)
+	user, err := service.userRepository.GetByEmail(context.TODO(), input.Email)
 	if err != nil {
 		panic(err)
 	}
@@ -123,7 +123,7 @@ func (service *UserService) validateCreateUser(input CreateUser) (*ValidCreateUs
 	return validUser, nil
 }
 
-func (service *UserService) CreateUser(input CreateUser) (*User, error) {
+func (service *UserService) Create(input CreateUser) (*User, error) {
 	validUser, err := service.validateCreateUser(input)
 	if err != nil {
 		return nil, err
@@ -132,12 +132,12 @@ func (service *UserService) CreateUser(input CreateUser) (*User, error) {
 	var createdUser *User
 	createdUserError := service.transactionRepository.WithTransaction(func(ctx context.Context) error {
 		var err error
-		createdUser, err = service.userRepository.InsertUser(ctx, *validUser)
+		createdUser, err = service.userRepository.Insert(ctx, *validUser)
 		if err != nil {
 			return err
 		}
 
-		_, err = service.logRepository.InsertLog(ctx, createdUser.ID, logs.LogOperationCreateUser)
+		_, err = service.logRepository.Insert(ctx, createdUser.ID, logs.LogOperationCreateUser)
 		return err
 	})
 

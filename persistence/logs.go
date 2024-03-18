@@ -35,11 +35,11 @@ func mapLog(mongoModel log) logs.Log {
 	}
 }
 
-func (repo *MongoLogRepository) GetLogsCollection() *mongo.Collection {
+func (repo *MongoLogRepository) Collection() *mongo.Collection {
 	return repo.client.Database("auth").Collection("logs")
 }
 
-func (repo *MongoLogRepository) GetLogs(ctx context.Context, userID string, pageSize int, after string) ([]logs.Log, error) {
+func (repo *MongoLogRepository) Get(ctx context.Context, userID string, pageSize int, after string) ([]logs.Log, error) {
 	objUserId, err := primitive.ObjectIDFromHex(userID)
 	if err != nil {
 		return nil, err
@@ -57,7 +57,7 @@ func (repo *MongoLogRepository) GetLogs(ctx context.Context, userID string, page
 	findOptions := options.Find()
 	findOptions.SetLimit(int64(pageSize))
 
-	cursor, err := repo.GetLogsCollection().Find(ctx, query, findOptions)
+	cursor, err := repo.Collection().Find(ctx, query, findOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -76,13 +76,13 @@ func (repo *MongoLogRepository) GetLogs(ctx context.Context, userID string, page
 	return logs, nil
 }
 
-func (repo *MongoLogRepository) InsertLog(ctx context.Context, userID string, op logs.LogOperation) (*logs.Log, error) {
+func (repo *MongoLogRepository) Insert(ctx context.Context, userID string, op logs.LogOperation) (*logs.Log, error) {
 	userObjId, err := primitive.ObjectIDFromHex(userID)
 	if err != nil {
 		return nil, err
 	}
 
-	collection := repo.GetLogsCollection()
+	collection := repo.Collection()
 	mongoLog := log{
 		ID:        primitive.ObjectID{},
 		UserID:    userObjId,
