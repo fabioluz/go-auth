@@ -4,10 +4,13 @@ import (
 	"auth/domain/users"
 	"errors"
 	"testing"
+
+	"github.com/go-playground/validator/v10"
 )
 
 func TestUserNotFound(t *testing.T) {
-	service := users.NewUserService(nil, nil, &MockUserRepository{})
+	validate := validator.New(validator.WithRequiredStructEnabled())
+	service := users.NewUserService(validate, nil, nil, &MockUserRepository{})
 
 	input := users.AuthenticateUserInput{
 		Email:    "some@email.com",
@@ -30,7 +33,8 @@ func TestUserNotFound(t *testing.T) {
 }
 
 func TestIncorrectPassword(t *testing.T) {
-	service := users.NewUserService(nil, nil, &MockUserRepository{})
+	validate := validator.New(validator.WithRequiredStructEnabled())
+	service := users.NewUserService(validate, nil, nil, &MockUserRepository{})
 
 	input := users.AuthenticateUserInput{
 		Email:    "existing@email.com",
@@ -49,7 +53,8 @@ func TestIncorrectPassword(t *testing.T) {
 }
 
 func TestCorrectPassword(t *testing.T) {
-	service := users.NewUserService(nil, nil, &MockUserRepository{})
+	validate := validator.New(validator.WithRequiredStructEnabled())
+	service := users.NewUserService(validate, nil, nil, &MockUserRepository{})
 
 	input := users.AuthenticateUserInput{
 		Email:    "existing@email.com",

@@ -3,11 +3,13 @@ package users
 import (
 	"auth/domain/logs"
 	"context"
+
+	"github.com/go-playground/validator/v10"
 )
 
 // Unvalidated input for updating user
 type UpdateUser struct {
-	Name string `json:"name"`
+	Name string `json:"name" validate:"required"`
 }
 
 type UpdateUserErrorCode string
@@ -31,10 +33,20 @@ type ValidUpdateUser struct {
 }
 
 func (service *UserService) validateUpdateUser(input UpdateUser) (*ValidUpdateUser, error) {
-	if input.Name == "" {
-		return nil, &UpdateUserError{
-			Code:    NameIsEmpty,
-			Message: "Name is empty.",
+
+	err := service.validate.Struct(&input)
+	if err != nil {
+		for _, err := range err.(validator.ValidationErrors) {
+			switch err.Field() {
+			case "Name":
+				switch err.Tag() {
+				case "required":
+					return nil, &UpdateUserError{
+						Code:    NameIsEmpty,
+						Message: "Name is empty.",
+					}
+				}
+			}
 		}
 	}
 

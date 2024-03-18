@@ -11,6 +11,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -24,8 +25,9 @@ func main() {
 	transactionRepository := persistence.NewTransactionRepository(client)
 	userRepository := persistence.NewUserRepository(client)
 	logRepository := persistence.NewLogRepository(client)
+	validate := validator.New(validator.WithRequiredStructEnabled())
 
-	userService := users.NewUserService(transactionRepository, logRepository, userRepository)
+	userService := users.NewUserService(validate, transactionRepository, logRepository, userRepository)
 	logService := logs.NewLogService(logRepository)
 
 	appCtx := &api.AppContext{

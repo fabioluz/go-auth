@@ -4,6 +4,8 @@ import (
 	"auth/domain/users"
 	"errors"
 	"testing"
+
+	"github.com/go-playground/validator/v10"
 )
 
 func TestInvalidInput(t *testing.T) {
@@ -66,7 +68,8 @@ func TestInvalidInput(t *testing.T) {
 		},
 	}
 
-	service := users.NewUserService(&MockTransactionRepository{}, &MockLogRepository{}, &MockUserRepository{})
+	validate := validator.New(validator.WithRequiredStructEnabled())
+	service := users.NewUserService(validate, &MockTransactionRepository{}, &MockLogRepository{}, &MockUserRepository{})
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -84,7 +87,8 @@ func TestInvalidInput(t *testing.T) {
 }
 
 func TestValidInput(t *testing.T) {
-	service := users.NewUserService(&MockTransactionRepository{}, &MockLogRepository{}, &MockUserRepository{})
+	validate := validator.New(validator.WithRequiredStructEnabled())
+	service := users.NewUserService(validate, &MockTransactionRepository{}, &MockLogRepository{}, &MockUserRepository{})
 	validInput := users.CreateUser{
 		Email:           "non-existing@email.com",
 		Password:        "123456",

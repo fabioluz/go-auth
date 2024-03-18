@@ -3,16 +3,17 @@ package users
 import (
 	"auth/domain/logs"
 	"context"
-	"regexp"
 	"strings"
+
+	"github.com/go-playground/validator/v10"
 )
 
 // Unvalidated Input for creating user
 type CreateUser struct {
-	Email           string `json:"email"`
-	Password        string `json:"password"`
-	ConfirmPassword string `json:"confirmPassword"`
-	Name            string `json:"name"`
+	Email           string `json:"email" validate:"required,email"`
+	Password        string `json:"password" validate:"gte=6"`
+	ConfirmPassword string `json:"confirmPassword" validate:"eqfield=Password"`
+	Name            string `json:"name" validate:"required"`
 }
 
 type CreateUserErrorCode string
@@ -41,38 +42,58 @@ type ValidCreateUser struct {
 	Name           string
 }
 
-func isValidEmail(email string) bool {
-	emailRegex := regexp.MustCompile(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`)
-	return emailRegex.MatchString(email)
-}
-
 func (service *UserService) validateCreateUser(input CreateUser) (*ValidCreateUser, error) {
 	input.Email = strings.TrimSpace(input.Email)
-	if len(input.Email) == 0 {
-		return nil, &CreateUserError{
-			Code:    EmailIsEmpty,
-			Message: "Email is empty.",
-		}
-	}
 
-	if !isValidEmail(input.Email) {
-		return nil, &CreateUserError{
-			Code:    EmailIsInvalid,
-			Message: "Email is empty.",
-		}
-	}
+	err := service.validate.Struct(&input)
+	if err != nil {
+		for _, err := range err.(validator.ValidationErrors) {
+			switch err.Field() {
+			case "Email":
+				switch err.Tag() {
+				case "required":
+					return nil, &CreateUserError{
+						Code:    EmailIsEmpty,
+						Message: "Email is empty.",
+					}
+				case "email":
+					return nil, &CreateUserError{
+						Code:    EmailIsInvalid,
+						Message: "Email is invalid.",
+					}
+				}
+			case "Password":
+				switch err.Tag() {
+				case "required":
+					return nil, &CreateUserError{
+						Code:    PasswordIsInvalid,
+						Message: "Password is invalid.",
+					}
+				case "gte":
+					return nil, &CreateUserError{
+						Code:    PasswordIsInvalid,
+						Message: "Password is invalid.",
+					}
+				}
+			case "ConfirmPassword":
+				switch err.Tag() {
+				case "eqfield":
+					return nil, &CreateUserError{
+						Code:    ConfirmPasswordDoesNotMatch,
+						Message: "Confirm password does not match.",
+					}
 
-	if len(input.Password) < 6 {
-		return nil, &CreateUserError{
-			Code:    PasswordIsInvalid,
-			Message: "Password is invalid.",
-		}
-	}
+				}
+			case "Name":
+				switch err.Tag() {
+				case "eqfield":
+					return nil, &CreateUserError{
+						Code:    "name_is_empty",
+						Message: "Name is empty.",
+					}
 
-	if input.Password != input.ConfirmPassword {
-		return nil, &CreateUserError{
-			Code:    ConfirmPasswordDoesNotMatch,
-			Message: "Confirm password does not match.",
+				}
+			}
 		}
 	}
 
