@@ -30,14 +30,14 @@ func main() {
 	userService := users.NewUserService(validate, transactionRepository, logRepository, userRepository)
 	logService := logs.NewLogService(logRepository)
 
-	appCtx := &api.AppContext{
+	server := &api.Server{
 		Port:        envVars.port,
 		JwtSecret:   []byte(envVars.jwtSecret),
 		UserService: userService,
 		LogService:  logService,
 	}
 
-	api.Run(appCtx)
+	server.Run()
 }
 
 type envVars struct {

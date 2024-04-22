@@ -15,7 +15,7 @@ type AppClaims struct {
 	jwt.RegisteredClaims
 }
 
-func generateToken(appCtx *AppContext, user *users.User) (string, error) {
+func generateToken(appCtx *Server, user *users.User) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, AppClaims{
 		UserID:    user.ID,
 		UserEmail: user.Email,
@@ -27,7 +27,7 @@ func generateToken(appCtx *AppContext, user *users.User) (string, error) {
 	return token.SignedString(appCtx.JwtSecret)
 }
 
-func parseToken(appCtx *AppContext, strToken string) (*AppClaims, error) {
+func parseToken(appCtx *Server, strToken string) (*AppClaims, error) {
 	token, err := jwt.ParseWithClaims(strToken, &AppClaims{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])

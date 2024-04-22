@@ -29,28 +29,26 @@ func getAfterParam(ctx *gin.Context) string {
 	return ctx.Param("after")
 }
 
-func getLogs(appCtx *AppContext) func(ctx *gin.Context) {
-	return func(ctx *gin.Context) {
-		loggedInUser, err := getLoggedInUser(ctx)
-		if err != nil {
-			ctx.AbortWithStatus(http.StatusNotFound)
-			return
-		}
-
-		if ctx.Param("userId") != loggedInUser.ID {
-			ctx.AbortWithStatus(http.StatusNotFound)
-			return
-		}
-
-		pageSize := getPageSizeParam(ctx)
-		after := getAfterParam(ctx)
-
-		logs, err := appCtx.LogService.Get(loggedInUser.ID, pageSize, after)
-		if err != nil {
-			ctx.AbortWithStatus(http.StatusBadRequest)
-			return
-		}
-
-		ctx.JSON(http.StatusOK, logs)
+func (server *Server) getLogs(ctx *gin.Context) {
+	loggedInUser, err := getLoggedInUser(ctx)
+	if err != nil {
+		ctx.AbortWithStatus(http.StatusNotFound)
+		return
 	}
+
+	if ctx.Param("userId") != loggedInUser.ID {
+		ctx.AbortWithStatus(http.StatusNotFound)
+		return
+	}
+
+	pageSize := getPageSizeParam(ctx)
+	after := getAfterParam(ctx)
+
+	logs, err := server.LogService.Get(loggedInUser.ID, pageSize, after)
+	if err != nil {
+		ctx.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, logs)
 }

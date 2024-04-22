@@ -15,39 +15,37 @@ type AuthenticateUserOutput struct {
 	Name  string `json:"name"`
 }
 
-func authenticateUser(app *AppContext) func(ctx *gin.Context) {
-	return func(ctx *gin.Context) {
-		var request users.AuthenticateUserInput
-		if err := ctx.BindJSON(&request); err != nil {
-			ctx.AbortWithStatus(http.StatusBadRequest)
-			return
-		}
-
-		user, err := app.UserService.Authenticate(request)
-		if err != nil {
-			var userErr *users.AuthenticateUserError
-			if errors.As(err, &userErr) {
-				ctx.AbortWithStatus(http.StatusUnauthorized)
-				return
-			}
-
-			ctx.AbortWithStatus(http.StatusInternalServerError)
-			return
-		}
-
-		token, err := generateToken(app, user)
-		if err != nil {
-			ctx.AbortWithStatus(http.StatusInternalServerError)
-			return
-		}
-
-		output := AuthenticateUserOutput{
-			ID:    user.ID,
-			Email: user.Email,
-			Name:  user.Name,
-			Token: token,
-		}
-
-		ctx.JSON(http.StatusOK, output)
+func (server *Server) authenticateUser(ctx *gin.Context) {
+	var request users.AuthenticateUserInput
+	if err := ctx.BindJSON(&request); err != nil {
+		ctx.AbortWithStatus(http.StatusBadRequest)
+		return
 	}
+
+	user, err := server.UserService.Authenticate(request)
+	if err != nil {
+		var userErr *users.AuthenticateUserError
+		if errors.As(err, &userErr) {
+			ctx.AbortWithStatus(http.StatusUnauthorized)
+			return
+		}
+
+		ctx.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+
+	token, err := generateToken(server, user)
+	if err != nil {
+		ctx.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+
+	output := AuthenticateUserOutput{
+		ID:    user.ID,
+		Email: user.Email,
+		Name:  user.Name,
+		Token: token,
+	}
+
+	ctx.JSON(http.StatusOK, output)
 }

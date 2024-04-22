@@ -8,21 +8,21 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type AppContext struct {
+type Server struct {
 	Port        int
 	JwtSecret   []byte
 	UserService *users.UserService
 	LogService  *logs.LogService
 }
 
-func Run(appCtx *AppContext) {
+func (server *Server) Run() {
 	router := gin.Default()
-	router.Use(authorizeRoutes(appCtx))
-	router.POST("/authenticate", authenticateUser(appCtx))
-	router.POST("/users", createUser(appCtx))
-	router.GET("/users/:userId", getUser(appCtx))
-	router.PATCH("/users/:userId", updateUser(appCtx))
-	router.GET("/users/:userId/logs", getLogs(appCtx))
+	router.Use(server.authorizeRoutes)
+	router.POST("/authenticate", server.authenticateUser)
+	router.POST("/users", server.createUser)
+	router.GET("/users/:userId", server.getUser)
+	router.PATCH("/users/:userId", server.updateUser)
+	router.GET("/users/:userId/logs", server.getLogs)
 
-	router.Run(":" + strconv.Itoa(appCtx.Port))
+	router.Run(":" + strconv.Itoa(server.Port))
 }
